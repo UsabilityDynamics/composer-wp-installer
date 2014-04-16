@@ -107,14 +107,14 @@ class AssetMiniInstaller extends LibraryInstaller
 	private function copyr($src, $dst)
 	{
 		// Get a list of all the src files
-		$iterator = new RecursiveIteratorIterator
+		$iterator = new \RecursiveIteratorIterator
 		(
-			new RecursiveDirectoryIterator
+			new \RecursiveDirectoryIterator
 			(
 				$src,
-				RecursiveDirectoryIterator::SKIP_DOTS
+				\RecursiveDirectoryIterator::SKIP_DOTS
 			),
-			RecursiveIteratorIterator::SELF_FIRST
+			\RecursiveIteratorIterator::SELF_FIRST
 		);
 		
 		// Loop through each file
