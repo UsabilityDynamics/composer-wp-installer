@@ -7,7 +7,7 @@
 	{
 		"psr-4":
 		{
-			"Gears\\Composer": "src/"
+			"Gears\\Composer\\": "src/"
 		}
 	},
 	"extra":
