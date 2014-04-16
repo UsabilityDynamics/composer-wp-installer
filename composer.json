@@ -1,6 +1,6 @@
 {
 	"name": "gears/installer",
-	description: "Installer for the Gears Framework",
+	"description": "Installer for the Gears Framework",
 	"type": "composer-installer",
 	"license": "MIT",
 	"autoload":
