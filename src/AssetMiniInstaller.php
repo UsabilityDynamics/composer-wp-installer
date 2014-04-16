@@ -105,7 +105,7 @@ class AssetMiniInstaller extends LibraryInstaller
 			{
 				// Okay it's safe to update it
 				unlink('assets/.htaccess');
-				copy($this->skel.'/min.php', 'assets/.htaccess');
+				copy($this->skel.'/.htaccess', 'assets/.htaccess');
 			}
 		}
 	}
