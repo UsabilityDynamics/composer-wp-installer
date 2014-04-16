@@ -1,4 +1,17 @@
-<?php namespace Gears\Composer;
+<?php
+////////////////////////////////////////////////////////////////////////////////
+// __________ __             ________                   __________              
+// \______   \  |__ ______  /  _____/  ____ _____ ______\______   \ _______  ___
+//  |     ___/  |  \\____ \/   \  ____/ __ \\__  \\_  __ \    |  _//  _ \  \/  /
+//  |    |   |   Y  \  |_> >    \_\  \  ___/ / __ \|  | \/    |   (  <_> >    < 
+//  |____|   |___|  /   __/ \______  /\___  >____  /__|  |______  /\____/__/\_ \
+//                \/|__|           \/     \/     \/             \/            \/
+// -----------------------------------------------------------------------------
+//          Designed and Developed by Brad Jones <brad @="bjc.id.au" />         
+// -----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+
+namespace Gears\Composer;
 
 use Composer\Installer\LibraryInstaller;
 use Composer\Package\PackageInterface;
@@ -29,8 +42,8 @@ class AssetMiniInstaller extends LibraryInstaller
 		// Run the parent installer
 		parent::install($repo, $package);
 		
-		// Create the path to our assetmini skel dir
-		$this->skel = $this->vendorDir.'/gears/assetmini/skel';
+		// Create the skel dir path
+		$this->skelDir();
 		
 		// Check for an existing assets dir
 		if (!file_exists('assets/') && !is_dir('assets/'))
@@ -41,32 +54,58 @@ class AssetMiniInstaller extends LibraryInstaller
 			// Copy in the AssetMini skeleton
 			$this->copyr($this->skel, 'assets/');
 		}
-		else
+	}
+	
+	/**
+	 * Method: update
+	 * =========================================================================
+	 * This method over loads the parent update method.
+	 * We still update assetmini like a normal library.
+	 * 
+	 * After the parent update method has run we come along and update the
+	 * min.php and .htaccess files if they exist
+	 * 
+	 * Parameters:
+	 * -------------------------------------------------------------------------
+	 * $repo - InstalledRepositoryInterface
+	 * $package - PackageInterface
+	 * $target - PackageInterface
+	 * 
+	 * Returns:
+	 * -------------------------------------------------------------------------
+	 * void
+	 */
+	public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
+	{
+		// Run the parent installer
+		parent::update($repo, $initial, $target);
+		
+		// Create the skel dir path
+		$this->skelDir();
+		
+		// Does our min.php exist in the assets folder
+		if (file_exists('assets/min.php'))
 		{
-			// Does our min.php exist in the assets folder
-			if (file_exists('assets/min.php'))
+			// Make sure it's ours
+			$file = file_get_contents('assets/min.php');
+			if (strpos($file, '<brad @="bjc.id.au" />'))
 			{
-				// Make sure it's ours
-				$file = file_get_contents('assets/min.php');
-				if (strpos($file, '<brad @="bjc.id.au" />'))
-				{
-					// Okay it's safe to update it
-					unlink('assets/min.php');
-					copy($this->skel.'/min.php', 'assets/min.php');
-				}
+				// Okay it's safe to update it
+				unlink('assets/min.php');
+				copy($this->skel.'/min.php', 'assets/min.php');
 			}
-			
-			// Does our .htaccess exist in the assets folder
-			if (file_exists('assets/.htaccess'))
+		}
+		
+		// Does our .htaccess exist in the assets folder
+		if (file_exists('assets/.htaccess'))
+		{
+			// Make sure it's ours
+			$file = file_get_contents('assets/.htaccess');
+			if (strpos($file, '<brad @="bjc.id.au" />'))
 			{
-				// Make sure it's ours
-				$file = file_get_contents('assets/.htaccess');
-				if (strpos($file, '<brad @="bjc.id.au" />'))
-				{
-					// Okay it's safe to update it
-					unlink('assets/.htaccess');
-					copy($this->skel.'/min.php', 'assets/.htaccess');
-				}
+				// Okay it's safe to update it
+				unlink('assets/.htaccess');
+				copy($this->skel.'/min.php', 'assets/.htaccess');
 			}
 		}
 	}
@@ -88,6 +127,26 @@ class AssetMiniInstaller extends LibraryInstaller
 	public function supports($packageType)
 	{
 		return (bool)('gears-assetmini' === $packageType);
+	}
+	
+	/**
+	 * Method: skelDir
+	 * =========================================================================
+	 * This is just a little helper to point us to the
+	 * skel dir in the `gears\assetmini` package.
+	 * 
+	 * Parameters:
+	 * -------------------------------------------------------------------------
+	 * n/a
+	 * 
+	 * Returns:
+	 * -------------------------------------------------------------------------
+	 * void
+	 */
+	private function skelDir()
+	{
+		// Create the path to our assetmini skel dir
+		$this->skel = $this->vendorDir.'/gears/assetmini/skel';
 	}
 	
 	/**
