@@ -43,15 +43,18 @@ class AssetMiniInstaller extends LibraryInstaller
 		parent::install($repo, $package);
 		
 		// Do we have a custom path to install to
-		$extra = $package->getExtra();
-		if (!empty($extra['assetmini-dir']))
+		if ($this->composer->getPackage())
 		{
-			$this->copySkelToAssets($extra['assetmini-dir']);
+			$extra = $this->composer->getPackage()->getExtra();
+			if (!empty($extra['assetmini-dir']))
+			{
+				$this->copySkelToAssets($extra['assetmini-dir']);
+				return;
+			}
 		}
-		else
-		{
-			$this->copySkelToAssets('assets/');
-		}
+		
+		// Otherwise just put it in the root
+		$this->copySkelToAssets('assets/');
 	}
 	
 	/**
@@ -79,17 +82,20 @@ class AssetMiniInstaller extends LibraryInstaller
 		parent::update($repo, $initial, $target);
 		
 		// Update any of our files that we find with our newer versions
-		$extra = $package->getExtra();
-		if (!empty($extra['assetmini-dir']))
+		if ($this->composer->getPackage())
 		{
-			$this->updateFile('min.php', $extra['assetmini-dir'].'/min.php');
-			$this->updateFile('.htaccess', $extra['assetmini-dir'].'/.htaccess');
+			$extra = $this->composer->getPackage()->getExtra();
+			if (!empty($extra['assetmini-dir']))
+			{
+				$this->updateFile('min.php', $extra['assetmini-dir'].'/min.php');
+				$this->updateFile('.htaccess', $extra['assetmini-dir'].'/.htaccess');
+				return;
+			}
 		}
-		else
-		{
-			$this->updateFile('min.php', 'assets/min.php');
-			$this->updateFile('.htaccess', 'assets/.htaccess');
-		}
+		
+		// Otherwise just look in the root
+		$this->updateFile('min.php', 'assets/min.php');
+		$this->updateFile('.htaccess', 'assets/.htaccess');
 	}
 	
 	/**
