@@ -42,10 +42,11 @@ class AssetMiniInstaller extends LibraryInstaller
 		// Run the parent installer
 		parent::install($repo, $package);
 		
-		// Check for a public dir
-		if (is_dir('public/'))
+		// Do we have a custom path to install to
+		$extra = $package->getExtra();
+		if (!empty($extra['assetmini-dir']))
 		{
-			$this->copySkelToAssets('public/assets/');
+			$this->copySkelToAssets($extra['assetmini-dir']);
 		}
 		else
 		{
@@ -78,10 +79,17 @@ class AssetMiniInstaller extends LibraryInstaller
 		parent::update($repo, $initial, $target);
 		
 		// Update any of our files that we find with our newer versions
-		$this->updateFile('min.php', 'assets/min.php');
-		$this->updateFile('.htaccess', 'assets/.htaccess');
-		$this->updateFile('min.php', 'public/assets/min.php');
-		$this->updateFile('.htaccess', 'public/assets/.htaccess');
+		$extra = $package->getExtra();
+		if (!empty($extra['assetmini-dir']))
+		{
+			$this->updateFile('min.php', $extra['assetmini-dir'].'/min.php');
+			$this->updateFile('.htaccess', $extra['assetmini-dir'].'/.htaccess');
+		}
+		else
+		{
+			$this->updateFile('min.php', 'assets/min.php');
+			$this->updateFile('.htaccess', 'assets/.htaccess');
+		}
 	}
 	
 	/**
