@@ -180,6 +180,11 @@ class AssetMiniInstaller extends LibraryInstaller
 				copy($this->getSkelDir().'/'.$file_src, $file_dst);
 			}
 		}
+		else
+		{
+			// Lets create it
+			copy($this->getSkelDir().'/'.$file_src, $file_dst);
+		}
 	}
 	
 	/**
