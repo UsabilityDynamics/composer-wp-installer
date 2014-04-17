@@ -142,6 +142,12 @@ class AssetMiniInstaller extends LibraryInstaller
 			// Copy in the AssetMini skeleton
 			$this->copyr($this->getSkelDir(), $assets_dir);
 		}
+		else
+		{
+			// Try and just update our files
+			$this->updateFile('min.php', $assets_dir.'/min.php');
+			$this->updateFile('.htaccess', $assets_dir.'/.htaccess');
+		}
 	}
 	
 	/**
