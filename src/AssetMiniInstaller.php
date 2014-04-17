@@ -42,17 +42,14 @@ class AssetMiniInstaller extends LibraryInstaller
 		// Run the parent installer
 		parent::install($repo, $package);
 		
-		// Create the skel dir path
-		$this->skelDir();
-		
-		// Check for an existing assets dir
-		if (!file_exists('assets/') && !is_dir('assets/'))
+		// Check for a public dir
+		if (is_dir('public/'))
 		{
-			// Create the assets dir (if it does not already exist)
-			mkdir('assets/');
-			
-			// Copy in the AssetMini skeleton
-			$this->copyr($this->skel, 'assets/');
+			$this->copySkelToAssets('public/assets/');
+		}
+		else
+		{
+			$this->copySkelToAssets('assets/');
 		}
 	}
 	
@@ -80,34 +77,11 @@ class AssetMiniInstaller extends LibraryInstaller
 		// Run the parent installer
 		parent::update($repo, $initial, $target);
 		
-		// Create the skel dir path
-		$this->skelDir();
-		
-		// Does our min.php exist in the assets folder
-		if (file_exists('assets/min.php'))
-		{
-			// Make sure it's ours
-			$file = file_get_contents('assets/min.php');
-			if (strpos($file, '<brad @="bjc.id.au" />'))
-			{
-				// Okay it's safe to update it
-				unlink('assets/min.php');
-				copy($this->skel.'/min.php', 'assets/min.php');
-			}
-		}
-		
-		// Does our .htaccess exist in the assets folder
-		if (file_exists('assets/.htaccess'))
-		{
-			// Make sure it's ours
-			$file = file_get_contents('assets/.htaccess');
-			if (strpos($file, '<brad @="bjc.id.au" />'))
-			{
-				// Okay it's safe to update it
-				unlink('assets/.htaccess');
-				copy($this->skel.'/.htaccess', 'assets/.htaccess');
-			}
-		}
+		// Update any of our files that we find with our newer versions
+		$this->updateFile('min.php', 'assets/min.php');
+		$this->updateFile('.htaccess', 'assets/.htaccess');
+		$this->updateFile('min.php', 'public/assets/min.php');
+		$this->updateFile('.htaccess', 'public/assets/.htaccess');
 	}
 	
 	/**
@@ -130,7 +104,66 @@ class AssetMiniInstaller extends LibraryInstaller
 	}
 	
 	/**
-	 * Method: skelDir
+	 * Method: copySkelToAssets
+	 * =========================================================================
+	 * This will check to see if the assets_dir exists and if not we will
+	 * create it and copy in the skel dir from the `gears\assetmini` package.
+	 * 
+	 * Parameters:
+	 * -------------------------------------------------------------------------
+	 * $assets_dir - This is where we are going to copy the skel dir to
+	 * 
+	 * Returns:
+	 * -------------------------------------------------------------------------
+	 * void
+	 */
+	private function copySkelToAssets($assets_dir)
+	{
+		// Check for an existing assets dir
+		if (!file_exists($assets_dir) && !is_dir($assets_dir))
+		{
+			// Create the assets dir (if it does not already exist)
+			mkdir($assets_dir);
+			
+			// Copy in the AssetMini skeleton
+			$this->copyr($this->getSkelDir(), $assets_dir);
+		}
+	}
+	
+	/**
+	 * Method: updateFile
+	 * =========================================================================
+	 * This checks to see if $file_dst exists and that it is one of files.
+	 * We do this by confirming our code signature <brad @="bjc.id.au" />
+	 * exists in the file. Once we are sure that it is a file that this
+	 * package created we overwrite it with a new version from the skel dir.
+	 * 
+	 * Parameters:
+	 * -------------------------------------------------------------------------
+	 * $file_src - This is the file that exists in the skel dir.
+	 * $file_dst - This is the file we are going to try and update.
+	 * 
+	 * Returns:
+	 * -------------------------------------------------------------------------
+	 * void
+	 */
+	private function updateFile($file_src, $file_dst)
+	{
+		// Does our file exist
+		if (file_exists($file_dst))
+		{
+			// Make sure it's ours
+			if (strpos(file_get_contents($file_dst), '<brad @="bjc.id.au" />'))
+			{
+				// Okay it's safe to update it
+				unlink($file_dst);
+				copy($this->getSkelDir().'/'.$file_src, $file_dst);
+			}
+		}
+	}
+	
+	/**
+	 * Method: getSkelDir
 	 * =========================================================================
 	 * This is just a little helper to point us to the
 	 * skel dir in the `gears\assetmini` package.
@@ -141,12 +174,12 @@ class AssetMiniInstaller extends LibraryInstaller
 	 * 
 	 * Returns:
 	 * -------------------------------------------------------------------------
-	 * void
+	 * The path to our skeleton dir
 	 */
-	private function skelDir()
+	private function getSkelDir()
 	{
-		// Create the path to our assetmini skel dir
-		$this->skel = $this->vendorDir.'/gears/assetmini/skel';
+		// Return the path to our assetmini skel dir
+		return $this->vendorDir.'/gears/assetmini/skel';
 	}
 	
 	/**
