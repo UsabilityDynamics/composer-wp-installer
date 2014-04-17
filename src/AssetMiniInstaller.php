@@ -131,7 +131,7 @@ class AssetMiniInstaller extends LibraryInstaller
 		if (!file_exists($assets_dir) && !is_dir($assets_dir))
 		{
 			// Create the assets dir (if it does not already exist)
-			mkdir($assets_dir);
+			mkdir($assets_dir, 0777, true);
 			
 			// Copy in the AssetMini skeleton
 			$this->copyr($this->getSkelDir(), $assets_dir);
