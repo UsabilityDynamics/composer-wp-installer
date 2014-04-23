@@ -1,24 +1,33 @@
 {
-	"name": "gears/installer",
-	"description": "Installer for the Gears Framework",
-	"type": "composer-installer",
-	"license": "MIT",
-	"autoload":
-	{
-		"psr-4":
-		{
-			"Gears\\Composer\\": "src/"
-		}
-	},
-	"extra":
-	{
-		"class":
-		[
-			"Gears\\Composer\\AssetMiniInstaller"
-		]
-	},
-	"require":
-	{
-		"composer-plugin-api": "1.0.0"
-	}
+  "name": "usabilitydynamics/composer-wp-installer",
+  "type": "composer-installer",
+  "version": "master",
+  "require": {
+    "composer/installers": "~1.0",
+    "composer-plugin-api": "1.0.0"
+  },
+  "autoload": {
+    "classmap": [
+      "lib"
+    ],
+    "psr-4": {
+      "UsabilityDynamics\\ComposerWpInstaller\\": "src/"
+    }
+  },
+  "dist": {
+    "url": "https://github.com/UsabilityDynamics/composer-wp-installer/archive/master.zip",
+    "type": "zip"
+  },
+  "extra":
+  {
+    "class":
+      [
+        "UsabilityDynamics\\ComposerWpInstaller\\Installer"
+      ]
+  },
+  "source": {
+    "url": "git@github.com:UsabilityDynamics/composer-wp-installer.git",
+    "type": "git",
+    "reference": "master"
+  }
 }
