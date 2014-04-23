@@ -88,7 +88,11 @@ class Installer extends LibraryInstaller
       $this->vendorDir = dirname( $this->vendorDir ) . '/' . $this->directory_map[ $package->getType() ];
     }
 
-    return ($this->vendorDir ? $this->vendorDir.'/' : '') . $package->getPrettyName();
+    /** Pull in our package name */
+    $package_name = explode( '/', $package->getName() );
+    $package_name = array_pop( $package_name );
+
+    return ($this->vendorDir ? $this->vendorDir.'/' : '') . $package_name;
   }
 
   /**
