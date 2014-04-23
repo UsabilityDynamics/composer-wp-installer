@@ -7,9 +7,6 @@
     "composer-plugin-api": "1.0.0"
   },
   "autoload": {
-    "classmap": [
-      "lib"
-    ],
     "psr-4": {
       "UsabilityDynamics\\ComposerWpInstaller\\": "src/"
     }
