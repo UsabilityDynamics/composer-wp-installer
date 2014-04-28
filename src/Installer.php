@@ -13,14 +13,16 @@ class Installer extends LibraryInstaller
    * Our supported object types
    */
   protected $supported = array(
-    'wordpress-plugin'
+    'wordpress-plugin',
+    'wordpress-muplugin'
   );
 
   /**
    * Our supported directory maps
    */
   protected $directory_map = array(
-    'wordpress-plugin' => 'modules'
+    'wordpress-plugin' => 'modules/::name::',
+    'wordpress-muplugin' => 'libraries/::vendor::/::name::'
   );
 
   /**
@@ -78,21 +80,34 @@ class Installer extends LibraryInstaller
 
   /**
    * We use this class to override where the items will be stored, instead of relying on the config file
+   *
+   * @todo Add support for install-paths
    */
   protected function getPackageBasePath( PackageInterface $package ){
     /** Ok, so we have a custom directory for modules */
     $parent_return = parent::getPackageBasePath( $package );
-
-    /** Ok, see if we have a valid Dir */
-    if( $this->vendorDir ){
-      $this->vendorDir = dirname( $this->vendorDir ) . '/' . $this->directory_map[ $package->getType() ];
-    }
-
     /** Pull in our package name */
     $package_name = explode( '/', $package->getName() );
-    $package_name = array_pop( $package_name );
-
-    return ($this->vendorDir ? $this->vendorDir.'/' : '') . $package_name;
+    /** Ok, see if we have a vendor and package name */
+    if( count( $package_name ) == 2 ){
+      $vendor_name = $package_name[ 0 ];
+      $package_name = $package_name[ 1 ];
+    }else{
+      $vendor_name = '';
+      $package_name = $package->getName();
+    }
+    /** Ok, see if we have a valid Dir */
+    if( $this->vendorDir ){
+      $install_path = dirname( $this->vendorDir ) . '/' . $this->directory_map[ $package->getType() ];
+      /** Ok, now we're going to do our string replacement */
+      $install_path = str_ireplace( '::vendor::', $vendor_name, $install_path );
+      $install_path = str_ireplace( '::name::', $package_name, $install_path );
+      /** Return the vendor dir */
+      return $install_path;
+    }else{
+      /** We just return our package name */
+      return $package_name;
+    }
   }
 
   /**
